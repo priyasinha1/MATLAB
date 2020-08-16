@@ -1,0 +1,99 @@
+clc
+clear all
+close all
+nVar = 3;
+VarMin = [0 0 0];
+VarMax = [10 10 10];
+
+MaxIter = 200;
+nPop = 100;
+w = 1;
+d = 0.99;
+c1 = 2;
+c2 = 2;
+
+x0.position = [];
+x0.velocity = [];
+x0.fitness = [];
+x0.best.position = [];
+x0.best.fitness = [];
+x = repmat(x0,nPop,1);
+global_best.fitness = -inf;
+for i= 1:nPop
+    for k=1:nVar
+        x(i).position(k)= unifrnd(VarMin(k), VarMax(k));
+    end
+    x(i).velocity = zeros([1 nVar]);
+    x(i).fitness = objective_function(x(i).position);
+    x(i).best.position= x(i).position;
+    x(i).best.fitness = x(i).fitness;
+    if x(i).best.fitness > global_best.fitness
+        global_best = x(i).best;
+    end
+end
+B = zeros(MaxIter,1);
+C = zeros(MaxIter, nVar);
+for j = 1:MaxIter
+    for i = 1:nPop
+        x(i).velocity = w*x(i).velocity + c1*rand([1 nVar]).*(x(i).best.position - x(i).position)...
+            + c2*rand([1 nVar]).*(global_best.position - x(i).position);
+        x(i).position = x(i).position + x(i).velocity;
+        for k = 1:nVar
+            if x(i).position(k) < VarMin(k)
+                x(i).position(k) = VarMin(k);
+            end
+            if x(i).position(k) > VarMax(k)
+                x(i).positon(k) = VarMax(k);
+            end
+        end
+        x(i).fitnes = objective_function(x(i).position);
+        if x(i).fitness > x(i).best.fitness
+            x(i).best.position = x(i).position;
+            x(i).best.fitness = x(i).fitness;
+            if x(i).best.fitness > global_best.fitness
+                global_best = x(i).best;
+            end
+        end
+    end
+    w = w*d;
+    B(j) = global_best.fitness;
+    C(j,:) = global_best.position;
+    disp(['Iteration' num2str(j) '; Best Fitness =' num2str(B(j)) '; Optimal solution(L,W,H) = ' num2str(C(j,:))]);
+    plot(B(1:j,1),'r.');drawnow
+end
+    
+    
+    
+
+
+OBJECTIVE FUNCTION
+
+function Z = objective_function(X)
+L = X(1);
+W = X(2);
+H = X(3);
+
+P = 2*L*W + 2*L*H + 2*W*H - 10;
+if P < 0
+    P=0;
+else
+    P = 1;
+end
+Z = L*W*H*(1-P);
+
+          
+            
+        
+        
+        
+        
+        
+
+        
+
+
+
+
+
+
+
