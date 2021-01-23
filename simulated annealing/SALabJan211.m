@@ -11,7 +11,7 @@ k = 1 %Boltzman constant
 T_min = 0.0001; %Minimum temperature for cooling
 alpha= 0.95; %cooling factor
 max_rej=1000;
-max_accept=1;
+max_accept=30;
 initial_search=300;
 %Initializing Counters and values
 i = 0; j = 0; accept=0; totaleval = 0; 
